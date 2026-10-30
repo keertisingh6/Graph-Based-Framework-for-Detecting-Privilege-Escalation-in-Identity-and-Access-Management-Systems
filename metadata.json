@@ -1,0 +1,6 @@
+{
+  "name": "Explainable IAM Privilege Escalation Demo",
+  "description": "Interactive, explainable IAM privilege escalation detection with guided 7-step walkthrough, transparent BFS path discovery, logistic scoring, and evidence audit trails.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
