@@ -135,15 +135,12 @@ export const GlossarySection: React.FC = () => {
   });
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-8">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-4 pb-3 border-b border-slate-800">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-indigo-400" />
+          <BookOpen className="w-4 h-4 text-indigo-400" />
           <div>
-            <h3 className="text-base font-bold text-white">Security &amp; Explainability Glossary</h3>
-            <p className="text-xs text-slate-400">
-              Clear, plain-English definitions for every technical term used in this system.
-            </p>
+            <h3 className="text-sm font-bold text-white">Security &amp; Explainability Glossary</h3>
           </div>
         </div>
 
@@ -178,7 +175,7 @@ export const GlossarySection: React.FC = () => {
       </div>
 
       {/* Glossary Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-3">
         {filtered.map((item) => (
           <div
             key={item.term}

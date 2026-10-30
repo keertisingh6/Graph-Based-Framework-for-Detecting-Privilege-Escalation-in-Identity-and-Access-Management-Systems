@@ -67,27 +67,25 @@ export const SnapshotInspector: React.FC<SnapshotInspectorProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-8">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Database className="w-5 h-5 text-indigo-400" />
-          <h3 className="text-base font-bold text-white">IAM Snapshot &amp; Audit Logs Editor</h3>
+          <Database className="w-4 h-4 text-indigo-400" />
+          <h3 className="text-sm font-bold text-white">Snapshot &amp; Audit Logs</h3>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              onResetSampleData();
-              setJsonText(JSON.stringify(snapshot, null, 2));
-              setJsonError(null);
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
-          >
-            <RefreshCw className="w-3.5 h-3.5" /> Reload Default IAM Snapshot
-          </button>
-        </div>
+        <button
+          onClick={() => {
+            onResetSampleData();
+            setJsonText(JSON.stringify(snapshot, null, 2));
+            setJsonError(null);
+          }}
+          className="flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
+        >
+          <RefreshCw className="w-3 h-3" /> Reset Default
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="space-y-5">
         {/* JSON Editor */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">

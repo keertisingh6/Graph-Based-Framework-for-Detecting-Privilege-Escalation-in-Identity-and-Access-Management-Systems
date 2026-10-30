@@ -53,21 +53,21 @@ export const ModelSettings: React.FC<ModelSettingsProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-8">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Sliders className="w-5 h-5 text-indigo-400" />
-          <h3 className="text-base font-bold text-white">Detection Parameters &amp; Weights Control</h3>
+          <Sliders className="w-4 h-4 text-indigo-400" />
+          <h3 className="text-sm font-bold text-white">Parameters &amp; Weights</h3>
         </div>
         <button
           onClick={onResetDefaults}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
+          className="flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
         >
-          <RotateCcw className="w-3.5 h-3.5" /> Reset Default Settings
+          <RotateCcw className="w-3 h-3" /> Defaults
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Start Identity Selector */}
         <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
           <label className="block text-xs font-semibold text-slate-300 mb-1.5">
@@ -167,7 +167,7 @@ export const ModelSettings: React.FC<ModelSettingsProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           {/* Base Intercept */}
           <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
             <label className="block text-[11px] font-bold text-indigo-300 mb-1 truncate">

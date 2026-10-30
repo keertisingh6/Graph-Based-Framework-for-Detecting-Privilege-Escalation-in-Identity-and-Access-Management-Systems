@@ -30,6 +30,7 @@ import {
 import { Banner } from './components/Banner';
 import { WalkthroughStepper } from './components/WalkthroughStepper';
 import { IAMGraphView } from './components/IAMGraphView';
+import { CollapsibleSidebar, SidebarPanelType } from './components/CollapsibleSidebar';
 import { ModelSettings } from './components/ModelSettings';
 import { SnapshotInspector } from './components/SnapshotInspector';
 import { GlossarySection } from './components/GlossarySection';
@@ -45,6 +46,9 @@ import {
   GitFork,
   X,
   FileJson,
+  PanelRightOpen,
+  PanelRightClose,
+  Sparkles,
 } from 'lucide-react';
 
 export default function App() {
@@ -61,7 +65,10 @@ export default function App() {
   // Walkthrough & UI state
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [userSelectedPath, setUserSelectedPath] = useState<DiscoveredPath | null>(null);
-  const [activeTab, setActiveTab] = useState<'graph' | 'settings' | 'snapshot' | 'glossary'>('graph');
+
+  // Collapsible Sidebar State (Settings, Snapshot, Glossary)
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [activeSidebarPanel, setActiveSidebarPanel] = useState<SidebarPanelType>('settings');
 
   // Analyst Decision (Recorded in memory & export)
   const [analystDecision, setAnalystDecision] = useState<AnalystDecisionRecord>({
@@ -180,6 +187,15 @@ export default function App() {
     });
   };
 
+  const handleOpenSidebar = (panel: SidebarPanelType) => {
+    if (isSidebarOpen && activeSidebarPanel === panel) {
+      setIsSidebarOpen(false);
+    } else {
+      setActiveSidebarPanel(panel);
+      setIsSidebarOpen(true);
+    }
+  };
+
   const handleCopyExportJson = () => {
     navigator.clipboard.writeText(JSON.stringify(exportPayload, null, 2));
     setCopiedExport(true);
@@ -198,15 +214,18 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white">
-      {/* Top Banner with actions */}
+      {/* Top Banner with actions & sidebar triggers */}
       <Banner
         onOpenTests={() => setIsTestModalOpen(true)}
         onExport={() => setIsExportModalOpen(true)}
         currentStep={currentStep}
+        onOpenPanel={handleOpenSidebar}
+        activePanel={activeSidebarPanel}
+        isSidebarOpen={isSidebarOpen}
       />
 
-      {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Primary Workspace (Occupies Full Viewport Width with Zero Overcrowding) */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* GUIDED "HOW IT WORKS" WALKTHROUGH (7 Steps at Top of Page) */}
         <WalkthroughStepper
           currentStep={currentStep}
@@ -229,91 +248,90 @@ export default function App() {
           startUser={startUser}
         />
 
-        {/* Workspace Subpanel Navigation Tabs */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setActiveTab('graph')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-                activeTab === 'graph'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <GitFork className="w-4 h-4" />
-              <span>Full Identity Graph &amp; Traversal</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-                activeTab === 'settings'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <Sliders className="w-4 h-4" />
-              <span>Parameters &amp; Weights (Live Inputs)</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('snapshot')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-                activeTab === 'snapshot'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <Database className="w-4 h-4" />
-              <span>IAM Snapshot JSON &amp; Audit Logs</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('glossary')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-                activeTab === 'glossary'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Security &amp; Explainability Glossary (15 Terms)</span>
-            </button>
+        {/* Primary Workspace Header & Secondary Panel Launchers */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 bg-slate-900/60 border border-slate-800/80 p-3.5 rounded-xl">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 font-bold text-sm text-white">
+              <GitFork className="w-4 h-4 text-indigo-400" />
+              <span>Full Identity Graph Canvas</span>
+            </div>
+            <span className="text-slate-500 text-xs hidden sm:inline">&bull;</span>
+            <div className="text-xs text-slate-400 font-mono hidden sm:flex items-center gap-2">
+              <span>Root: <strong className="text-indigo-400">{startUser}</strong></span>
+              <span>&bull;</span>
+              <span>Limit L: <strong className="text-slate-200">{depthLimitL}</strong></span>
+              <span>&bull;</span>
+              <span>Escalation: <strong className={bfsResult.adminPaths.length > 0 ? 'text-rose-400 font-bold' : 'text-slate-400'}>{bfsResult.adminPaths.length > 0 ? 'REACHED' : 'NONE'}</strong></span>
+            </div>
           </div>
 
-          <div className="text-xs text-slate-400 font-mono">
-            Start: <span className="text-indigo-400 font-bold">{startUser}</span> | Limit L: {depthLimitL} | Target Admin: {bfsResult.adminPaths.length > 0 ? 'REACHED' : 'NOT FOUND'}
+          {/* Quick-Access Collapsible Sidebar Action Buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleOpenSidebar('settings')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                isSidebarOpen && activeSidebarPanel === 'settings'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
+              }`}
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>Parameters &amp; Weights</span>
+            </button>
+
+            <button
+              onClick={() => handleOpenSidebar('snapshot')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                isSidebarOpen && activeSidebarPanel === 'snapshot'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
+              }`}
+            >
+              <Database className="w-3.5 h-3.5" />
+              <span>Snapshot JSON &amp; Logs</span>
+            </button>
+
+            <button
+              onClick={() => handleOpenSidebar('glossary')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                isSidebarOpen && activeSidebarPanel === 'glossary'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Glossary (15 Terms)</span>
+            </button>
+
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition cursor-pointer ml-1"
+              title={isSidebarOpen ? 'Collapse sidebar' : 'Open sidebar'}
+            >
+              {isSidebarOpen ? <PanelRightClose className="w-4 h-4 text-indigo-400" /> : <PanelRightOpen className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
-        {/* Active Subpanel Views */}
-        {activeTab === 'graph' && (
-          <div className="space-y-6">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <div>
-                  <h3 className="text-base font-bold text-white">Full IAM Identity Graph</h3>
-                  <p className="text-xs text-slate-400">
-                    Accessible visual representation with dual-coding (color + explicit text badges). Click any node or edge to inspect statements.
-                  </p>
-                </div>
-                {bfsResult.adminPaths.length > 0 && (
-                  <span className="text-xs font-bold text-rose-400 bg-rose-950/80 px-3 py-1 rounded-full border border-rose-800">
-                    &bull; {bfsResult.adminPaths.length} Admin Escalation Path(s) Discovered
-                  </span>
-                )}
-              </div>
-              <IAMGraphView
-                graph={graph}
-                activePath={chosenPath.path}
-                highlightedEdgeIds={chosenPath.edgePath.map((e) => e.id)}
-                adminReached={chosenPath.leadsToAdmin}
-              />
-            </div>
-          </div>
-        )}
+        {/* Full Viewport-Width IAM Graph */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl">
+          <IAMGraphView
+            graph={graph}
+            activePath={chosenPath.path}
+            highlightedEdgeIds={chosenPath.edgePath.map((e) => e.id)}
+            adminReached={chosenPath.leadsToAdmin}
+          />
+        </div>
+      </main>
 
-        {activeTab === 'settings' && (
+      {/* Collapsible Sidebar for Secondary Panels */}
+      <CollapsibleSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        activePanel={activeSidebarPanel}
+        onSelectPanel={(panel) => setActiveSidebarPanel(panel)}
+      >
+        {activeSidebarPanel === 'settings' && (
           <ModelSettings
             users={snapshot.users}
             startUser={startUser}
@@ -338,7 +356,7 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'snapshot' && (
+        {activeSidebarPanel === 'snapshot' && (
           <SnapshotInspector
             snapshot={snapshot}
             onSnapshotChange={(newSnap) => {
@@ -351,8 +369,8 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'glossary' && <GlossarySection />}
-      </main>
+        {activeSidebarPanel === 'glossary' && <GlossarySection />}
+      </CollapsibleSidebar>
 
       {/* Attribution Footer */}
       <Footer />

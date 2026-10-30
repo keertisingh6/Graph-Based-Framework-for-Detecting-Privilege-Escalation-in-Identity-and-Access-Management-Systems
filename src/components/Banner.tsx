@@ -10,9 +10,19 @@ interface BannerProps {
   onOpenTests: () => void;
   onExport: () => void;
   currentStep: number;
+  onOpenPanel?: (panel: 'settings' | 'snapshot' | 'glossary') => void;
+  activePanel?: 'settings' | 'snapshot' | 'glossary' | null;
+  isSidebarOpen?: boolean;
 }
 
-export const Banner: React.FC<BannerProps> = ({ onOpenTests, onExport, currentStep }) => {
+export const Banner: React.FC<BannerProps> = ({
+  onOpenTests,
+  onExport,
+  currentStep,
+  onOpenPanel,
+  activePanel,
+  isSidebarOpen,
+}) => {
   return (
     <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 border-b border-indigo-900/60 text-white">
       {/* Top Advisory Pill Bar */}
@@ -24,7 +34,41 @@ export const Banner: React.FC<BannerProps> = ({ onOpenTests, onExport, currentSt
             &bull; Deterministic Mathematical Logic &bull; Zero Black-Box AI in Detection &bull; Pure Explainability
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {onOpenPanel && (
+            <div className="flex items-center gap-1.5 mr-1 border-r border-slate-700/80 pr-2.5">
+              <button
+                onClick={() => onOpenPanel('settings')}
+                className={`px-2 py-0.5 rounded text-xs transition cursor-pointer ${
+                  isSidebarOpen && activePanel === 'settings'
+                    ? 'bg-indigo-600 text-white font-bold'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                ⚙️ Settings
+              </button>
+              <button
+                onClick={() => onOpenPanel('snapshot')}
+                className={`px-2 py-0.5 rounded text-xs transition cursor-pointer ${
+                  isSidebarOpen && activePanel === 'snapshot'
+                    ? 'bg-indigo-600 text-white font-bold'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                🗄️ Snapshot
+              </button>
+              <button
+                onClick={() => onOpenPanel('glossary')}
+                className={`px-2 py-0.5 rounded text-xs transition cursor-pointer ${
+                  isSidebarOpen && activePanel === 'glossary'
+                    ? 'bg-indigo-600 text-white font-bold'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                📖 Glossary
+              </button>
+            </div>
+          )}
           <button
             onClick={onOpenTests}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 font-semibold text-xs border border-indigo-700 cursor-pointer transition"
